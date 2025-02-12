@@ -12,3 +12,9 @@ db.sqlite3
 
 #migrations 
 blog/migrations
+
+#env 
+.env
+
+# static file
+files/
