@@ -18,3 +18,4 @@ blog/migrations
 
 # static file
 files/
+staticfiles/
