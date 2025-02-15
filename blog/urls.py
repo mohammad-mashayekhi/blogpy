@@ -9,4 +9,8 @@ urlpatterns = [
     path('article/all/', views.AllArticleApiView.as_view(), name='article_all' ),
     
     path('article/search/', views.SearchArticleApiView.as_view(), name='search_article' ),
+    path('article/create/', views.CreateArticleApiView.as_view(), name='create_article' ),
+    
+    # delete 
+    # update cover article 
 ]

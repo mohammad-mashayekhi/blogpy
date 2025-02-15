@@ -4,7 +4,7 @@ from .models import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . import serializers
+from . import serializers as Serializers
 
 class IndexPage(TemplateView):
 
@@ -76,7 +76,7 @@ class SingleArtickeApiView(APIView):
         try:
             article_title = request.GET.get('title')
             atricle = Article.objects.filter(title__contains=article_title)
-            serialized_data = serializers.SingleArticleSerializer(atricle, many=True)
+            serialized_data = Serializers.SingleArticleSerializer(atricle, many=True)
             data = serialized_data.data
             
             return Response({'data': data}, status=status.HTTP_200_OK)
@@ -94,7 +94,7 @@ class SearchArticleApiView(APIView):
             from django.db.models import Q
             query = request.GET.get('query')
             artickes = Article.objects.filter(Q(title__contains=query) | Q(context__icontains=query))
-            serialized_data = serializers.SearchArticleSeializer(artickes, many=True)
+            serialized_data = Serializers.SearchArticleSeializer(artickes, many=True)
             data= serialized_data.data
             
             return Response({'data': data}, status=status.HTTP_200_OK)
@@ -104,3 +104,40 @@ class SearchArticleApiView(APIView):
                     {'status': "Internal server error", 'error': str(e)},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )                   
+
+class CreateArticleApiView(APIView):
+    
+    def post(self, request, formant=None):
+        try:
+            serializers = Serializers.CreateArticleSerializer(data=request.data)
+            if serializers.is_valid():
+                title = serializers.data.get('title')
+                cover = serializers.data.get('cover')
+                context = serializers.data.get('context')
+                category_id = serializers.data.get('category')
+                author_id = serializers.data.get('author')
+                promot = serializers.validated_data.get('promot', False) 
+            else:
+                return Response({'status': 'Bad request', 'error': serializers.errors},status=status.HTTP_200_OK)
+        
+        
+            user = User.objects.get(id=author_id)
+            author = UserProfile.objects.get(user=user)
+            category = Category.objects.get(id=category_id)
+            
+            article = Article()
+            article.title = title
+            article.cover = cover
+            article.context = context
+            article.category = category
+            article.author = author
+            article.promot = promot
+            article.save()
+            
+            
+            return Response({'status':'ok',"id":article.id},status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'status': "Internal server error", 'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )                   
