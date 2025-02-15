@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from .models import *
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 class IndexPage(TemplateView):
 
@@ -38,3 +41,31 @@ class IndexPage(TemplateView):
 class ContactPage(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'page-contact.html')
+    
+
+class AllArticleApiView(APIView):
+    
+    def get(self, request, format=None):
+        try:
+            
+            all_articles = Article.objects.all().order_by('-created_at')[:3]
+            data = []
+            
+            for article in all_articles:
+                data.append({
+                    "title": article.title,
+                    "cover": article.cover.url if article.cover else None,
+                    "content": article.context,
+                    "category": article.category.title,
+                    "author": article.author.user.first_name + ' ' + article.author.user.last_name,
+                    "created_at": article.created_at,
+                    "promot": article.promot
+                })
+                
+            return Response({'data': data}, status=status.HTTP_200_OK)
+        
+        except:    
+            return Response({'status':"Internal server error"}, 
+                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+          
