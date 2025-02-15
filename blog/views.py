@@ -4,6 +4,7 @@ from .models import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from . import serializers
 
 class IndexPage(TemplateView):
 
@@ -69,3 +70,37 @@ class AllArticleApiView(APIView):
                              status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
           
+class SingleArtickeApiView(APIView):
+    
+    def get(self, request, format=None):
+        try:
+            article_title = request.GET.get('title')
+            atricle = Article.objects.filter(title__contains=article_title)
+            serialized_data = serializers.SingleArticleSerializer(atricle, many=True)
+            data = serialized_data.data
+            
+            return Response({'data': data}, status=status.HTTP_200_OK)
+        except Exception as e:
+           return Response(
+                {'status': "Internal server error", 'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+           
+           
+class SearchArticleApiView(APIView):
+    
+   def get(self, request, fornamt=None):
+        try:
+            from django.db.models import Q
+            query = request.GET.get('query')
+            artickes = Article.objects.filter(Q(title__contains=query) | Q(context__icontains=query))
+            serialized_data = serializers.SearchArticleSeializer(artickes, many=True)
+            data= serialized_data.data
+            
+            return Response({'data': data}, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                    {'status': "Internal server error", 'error': str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )                   
