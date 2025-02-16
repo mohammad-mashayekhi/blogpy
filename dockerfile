@@ -9,9 +9,8 @@ COPY . /blogpy
 
 ADD requirements/requirements.txt /blogpy
 RUN pip install --upgrade pip
-RUN pip install requirements.txt
+RUN pip install -r requirements/requirements.txt
 
-RUN python manage.py collectstattic --no-input
+RUN python manage.py collectstatic --no-input
 
-CMD ["gunicorn", "--chdir", "blogpy", "--bind", ":8000", "blog.wsgi:application"]
-
+CMD ["gunicorn", "--chdir", "blogpy", "--bind", ":8000", "blogpy.wsgi:application"]
