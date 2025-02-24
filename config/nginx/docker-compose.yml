@@ -5,9 +5,9 @@ services:
     container_name: nginx
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     ports:
-      -"80:80"
+      - "80:80"
     volumes:
       - blogpy_static_volume:/blogpy/static
       - blogpy_files_volume:/blogpy/files

@@ -84,7 +84,7 @@ DATABASES = {
         'USER':'amin',
         'PASSWORD':'amin',
         'HOST':'blogpy_postgresql',
-        'PORT':'5433',
+        'PORT':'5432',
     }
 }
 
@@ -133,5 +133,5 @@ CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/'
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 # media settings
-MEDIA_URL = '/media/'
+MEDIA_URL = '/files/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '')
